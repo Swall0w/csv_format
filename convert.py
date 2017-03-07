@@ -12,6 +12,7 @@ import string
 def main ():
     Date = '日付'
     Journal = '借方名称'
+    Price = '金額'
     readfile = sys.argv[1]
     with open(readfile,mode='rb') as f:
         binary = f.read()
@@ -59,6 +60,25 @@ def main ():
         del df[journalname]
     df[Journal] = df[Journal].apply(lambda x: rm_all_white_space(str(x)))
 
+    # Price format
+    pricename =''
+    for item in df.columns.tolist():
+        index = item.find(Price)
+        if index != -1:
+            if item == Price:
+                pricename = item
+            else:
+                index1 = item.find('借方')
+                if index1 != -1:
+                    pricename = item
+                else:
+                    pass
+        else:
+            pass
+    if pricename != Price:
+        print('renamed ',pricename,' to ',Price)
+        df[Price] = df[pricename]
+        del df[pricename]
 
     df.to_csv('result.csv',index=False)
 
