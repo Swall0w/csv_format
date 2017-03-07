@@ -9,11 +9,11 @@ import re
 import unicodedata
 import string
 
-def main ():
+def main (readfile):
     Date = '日付'
     Journal = '借方名称'
     Price = '金額'
-    readfile = sys.argv[1]
+    outputfile = 'new_'+readfile
     with open(readfile,mode='rb') as f:
         binary = f.read()
         detect = chardet.detect(binary)
@@ -80,7 +80,7 @@ def main ():
         df[Price] = df[pricename]
         del df[pricename]
 
-    df.to_csv('result.csv',index=False)
+    df.to_csv(outputfile,index=False)
 
 # default format
 #日付    決修    伝票番号    部門ｺｰﾄﾞ    借方ｺｰﾄﾞ    借方名称    借方枝番    借方枝番摘要    貸方ｺｰﾄﾞ    貸方名称    貸方枝番    貸方枝番摘要    金額    摘要    税区分  対価    仕入区分    売上業種区分    消費税科目  売仕区分    ﾀﾞﾐｰ3
@@ -96,7 +96,6 @@ def rm_all_white_space(text):
     text = unicodedata.normalize("NFKC", text)
     table = str.maketrans("", "", string.punctuation  + "「」、。・")
     text = text.translate(table)
-#    text = [s.strip()for s in text]
     return ''.join([s.strip()for s in text])
 
 def conv_time_format(x):
@@ -118,18 +117,9 @@ def conv_time_format(x):
         else:
             return None
 
-
-#    sjisfile = sys.argv[1]
-#    utf8file = 'result.csv'
-#
-#    fin = codecs.open(sjisfile,'r','shift-jis')
-#    fout = codecs.open(utf8file,'w','utf-8')
-#    for row in fin:
-#        fout.write(row.encode('utf-8','ignore').decode('shift-jis'))
-#    fin.close()
-#    fout.close()
-
 if __name__ == '__main__':
-    main()
+    print(sys.argv[1:])
+    for item in sys.argv[1:]:
+        main(item)
 
 
