@@ -9,6 +9,7 @@ import re
 
 def main ():
     Date = '日付'
+    Journal = '借方名称'
     readfile = sys.argv[1]
     with open(readfile,mode='rb') as f:
         binary = f.read()
@@ -38,14 +39,36 @@ def main ():
             datename = item
         else:
             pass
-    print(datename)
-
-    #df['日付'] = df['日付'].apply(lambda x:conv_time_format(x))
     df[Date] = df[datename].apply(lambda x:conv_time_format(x))
     if datename != Date:
         del df[datename]
 
+    # Journal format
+    journalname = ''
+    for item in df.columns.tolist():
+        if item in ['借方名称','借方科目名称']:
+            journalname = item
+        else:
+            pass
+    if journalname != Journal:
+        print('renamed ',journalname,' to ',Journal)
+        df[Journal] = df[journalname]
+        del df[journalname]
+
+
     df.to_csv('result.csv',index=False)
+
+#    ^(\d{4})/(0[1-9]|1[0-2])/(0[1-9]|[12][0-9]|3[01])$
+# default format
+#日付    決修    伝票番号    部門ｺｰﾄﾞ    借方ｺｰﾄﾞ    借方名称    借方枝番    借方枝番摘要    貸方ｺｰﾄﾞ    貸方名称    貸方枝番    貸方枝番摘要    金額    摘要    税区分  対価    仕入区分    売上業種区分    消費税科目  売仕区分    ﾀﾞﾐｰ3
+#2015-01-04      3       100 現金（店）          500 売上（店）          232308  店売上　                            
+
+#伝票番号    日付 yyyy/MM/dd（必須） 借方科目コード（必須）  借方科目名称    借方補助科目コード  借方補助科目名称    借方金額（必須）    借方税額    借方税率    借方税区分  借方課非区分    借方部門コード  借方部門名称    貸方科目コード（必須）  貸方科目名称    貸方補助科目コード  貸方補助科目名称    貸方金額（必須）    貸方税額    貸方税率    貸方税区分  貸方課非区分    貸方部門コード  貸方部門名称    摘要
+#    2014/01/31  166 売掛金          312000  0   0   内税                511 売上高          297143  14857   5   内税    11          ㈱リョウテック
+
+#日付    決修    伝票番号    部門ｺｰﾄﾞ    借方ｺｰﾄﾞ    借方名称    借方枝番    借方枝番摘要    貸方ｺｰﾄﾞ    貸方名称    貸方枝番    貸方枝番摘要    金額    摘要    税区分  対価    仕入区分    売上業種区分    消費税科目  売仕区分    ﾀﾞﾐｰ3
+#H24.1.1 0           721 旅　費　交通費          101 現　　　　　金          2000    ＪＲ東日本　スイカチャージ代    11              借  仕  
+
 
 def conv_time_format(x):
     date_pattern1 = '(\d{4})/(\d{1,2})/(\d{1,2})'
@@ -65,17 +88,6 @@ def conv_time_format(x):
             return "{year}-{month}-{day}".format(year=y,month=m,day=d)
         else:
             return None
-
-#    ^(\d{4})/(0[1-9]|1[0-2])/(0[1-9]|[12][0-9]|3[01])$
-# default format
-#日付    決修    伝票番号    部門ｺｰﾄﾞ    借方ｺｰﾄﾞ    借方名称    借方枝番    借方枝番摘要    貸方ｺｰﾄﾞ    貸方名称    貸方枝番    貸方枝番摘要    金額    摘要    税区分  対価    仕入区分    売上業種区分    消費税科目  売仕区分    ﾀﾞﾐｰ3
-#2015-01-04      3       100 現金（店）          500 売上（店）          232308  店売上　                            
-
-#伝票番号    日付 yyyy/MM/dd（必須） 借方科目コード（必須）  借方科目名称    借方補助科目コード  借方補助科目名称    借方金額（必須）    借方税額    借方税率    借方税区分  借方課非区分    借方部門コード  借方部門名称    貸方科目コード（必須）  貸方科目名称    貸方補助科目コード  貸方補助科目名称    貸方金額（必須）    貸方税額    貸方税率    貸方税区分  貸方課非区分    貸方部門コード  貸方部門名称    摘要
-#    2014/01/31  166 売掛金          312000  0   0   内税                511 売上高          297143  14857   5   内税    11          ㈱リョウテック
-
-#日付    決修    伝票番号    部門ｺｰﾄﾞ    借方ｺｰﾄﾞ    借方名称    借方枝番    借方枝番摘要    貸方ｺｰﾄﾞ    貸方名称    貸方枝番    貸方枝番摘要    金額    摘要    税区分  対価    仕入区分    売上業種区分    消費税科目  売仕区分    ﾀﾞﾐｰ3
-#H24.1.1 0           721 旅　費　交通費          101 現　　　　　金          2000    ＪＲ東日本　スイカチャージ代    11              借  仕  
 
 
 #    sjisfile = sys.argv[1]
