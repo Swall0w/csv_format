@@ -6,6 +6,8 @@ import chardet
 from io import StringIO
 import pandas as pd
 import re
+import unicodedata
+import string
 
 def main ():
     Date = '日付'
@@ -27,11 +29,12 @@ def main ():
             pass
     else:
         print('not found')
-        
-    text = StringIO(text)
 
+    # convert str object to pandas dataframe
+    text = StringIO(text)
     df = pd.read_csv(text,sep=',')
 
+    # date format
     datename =''
     for item in df.columns.tolist():
         index = item.find(Date)
@@ -54,11 +57,11 @@ def main ():
         print('renamed ',journalname,' to ',Journal)
         df[Journal] = df[journalname]
         del df[journalname]
+    df[Journal] = df[Journal].apply(lambda x: rm_all_white_space(str(x)))
 
 
     df.to_csv('result.csv',index=False)
 
-#    ^(\d{4})/(0[1-9]|1[0-2])/(0[1-9]|[12][0-9]|3[01])$
 # default format
 #日付    決修    伝票番号    部門ｺｰﾄﾞ    借方ｺｰﾄﾞ    借方名称    借方枝番    借方枝番摘要    貸方ｺｰﾄﾞ    貸方名称    貸方枝番    貸方枝番摘要    金額    摘要    税区分  対価    仕入区分    売上業種区分    消費税科目  売仕区分    ﾀﾞﾐｰ3
 #2015-01-04      3       100 現金（店）          500 売上（店）          232308  店売上　                            
@@ -69,6 +72,12 @@ def main ():
 #日付    決修    伝票番号    部門ｺｰﾄﾞ    借方ｺｰﾄﾞ    借方名称    借方枝番    借方枝番摘要    貸方ｺｰﾄﾞ    貸方名称    貸方枝番    貸方枝番摘要    金額    摘要    税区分  対価    仕入区分    売上業種区分    消費税科目  売仕区分    ﾀﾞﾐｰ3
 #H24.1.1 0           721 旅　費　交通費          101 現　　　　　金          2000    ＪＲ東日本　スイカチャージ代    11              借  仕  
 
+def rm_all_white_space(text):
+    text = unicodedata.normalize("NFKC", text)
+    table = str.maketrans("", "", string.punctuation  + "「」、。・")
+    text = text.translate(table)
+#    text = [s.strip()for s in text]
+    return ''.join([s.strip()for s in text])
 
 def conv_time_format(x):
     date_pattern1 = '(\d{4})/(\d{1,2})/(\d{1,2})'
