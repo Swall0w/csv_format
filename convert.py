@@ -18,7 +18,7 @@ def main (readfile):
         binary = f.read()
         detect = chardet.detect(binary)
         print(detect)
-    text = binary.decode(detect['encoding']).encode('utf-8').decode('utf-8')
+    text = binary.decode(detect['encoding']).encode('utf-8','ignore').decode('utf-8')
     index = text[:20].find('仕訳日記帳')
     if index != -1:
         print('found at ',index)
