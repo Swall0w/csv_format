@@ -9,7 +9,7 @@ import re
 import unicodedata
 import string
 
-def main (readfile):
+def csvformator(readfile):
     Date = '日付'
     Journal = '借方名称'
     Price = '金額'
@@ -110,6 +110,6 @@ def conv_time_format(x):
 if __name__ == '__main__':
     print(sys.argv[1:])
     for item in sys.argv[1:]:
-        main(item)
+        csvformator(item)
 
 
