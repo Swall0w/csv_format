@@ -108,7 +108,7 @@ def conv_time_format(x):
             return None
 
 if __name__ == '__main__':
-    print(sys.argv[1:])
+    #print(sys.argv[1:])
     for item in sys.argv[1:]:
         csvformator(item)
 
